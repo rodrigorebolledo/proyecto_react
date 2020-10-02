@@ -45,9 +45,9 @@ import VariacionChart from '../Chart/VariacionChart';
         value: 'UTM',
     },
 
-    // {
-    //     value: 'BITCOIN',
-    // },    
+    {
+        value: 'BITCOIN',
+    },    
   ];
 
 
@@ -140,11 +140,6 @@ export default function FormConversor(props){
             let objeto = {name: 'Dólar', Alza: 5, Disminucion: -2}
             await axios.get(`https://mindicador.cl/api/${element.value.toLowerCase()}`)
             .then((res) => {
-                if(res.data.unidad_medida === "Dólar"){
-                    formateado = format_data(res.data.serie, false);
-                    objeto['name'] = element.value
-
-                }else{
                     formateado = format_data(res.data.serie, true);
                     objeto['name'] = element.value;
                     let valor_maximo = 0;
@@ -159,41 +154,20 @@ export default function FormConversor(props){
                             
                             valor_maximo = element.valor;
                             count_alzas += 1;
-                            console.log('valor maximo: ' + valor_maximo)
-                            console.log('valor: ' + element.valor);
 
-                        }
-
-                    });
-                    valor_maximo = 0;
-                    formateado.forEach(element => {
-                        console.log(element.valor);
-                        if(valor_maximo === 0){
-                            valor_maximo = element.valor;
-                        }
-
-                        if(element.valor < valor_maximo){
-                            
+                        } else if (element.valor < valor_maximo){
                             count_bajas -= 1;
-                            console.log('valor maximo: ' + valor_maximo)
-                            console.log('valor minimo: ' + element.valor);
-
-
-                        } else if (element.valor > valor_maximo) {
-                            valor_maximo = element.valor;
                         }
 
                     });
+
                     objeto['Alza'] = (count_alzas)
                     objeto['Disminucion'] = count_bajas
                     array_variaciones_chart.push(objeto);
                     contador += 1;
                     if(contador === currencies_items.length){
-                        setMultiHistorico(array_variaciones_chart); // REVISAR AQUÍ
+                        setMultiHistorico(array_variaciones_chart);
                     }
-
-
-                }
                 
             }).catch((err)=>{
                 console.log(`Se ha encontrado el siguiente error: ${err}`)

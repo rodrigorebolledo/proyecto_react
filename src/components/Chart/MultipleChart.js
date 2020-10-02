@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Bar, Label, ResponsiveContainer} from 'recharts';
+import { BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Bar, Label } from 'recharts';
 import Card from '@material-ui/core/Card';
 import { makeStyles, Typography } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
