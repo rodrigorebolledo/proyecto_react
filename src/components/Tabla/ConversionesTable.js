@@ -36,7 +36,7 @@ export default function ConversionesTable(props) {
             console.log(props.selectedValue)
             if(props.tipo === "clp"){
                 conversionesList.forEach(element => {
-                    let objeto = {c_moneda: element, equivalencia: element/(props.selectedValue*props.valorDolar) };
+                    let objeto = {c_moneda: element, equivalencia: Intl.NumberFormat('es-CL').format(element/(props.selectedValue*props.valorDolar)) };
                     rows_create.push(objeto) ;
                     counter += 1;
                 });
@@ -45,7 +45,7 @@ export default function ConversionesTable(props) {
                 }
             }else if (props.tipo === "divisa") {
                 conversionesList.forEach(element => {
-                    let objeto = {c_moneda: element, equivalencia: element*(props.selectedValue*props.valorDolar) };
+                    let objeto = {c_moneda: element, equivalencia: Intl.NumberFormat('es-CL').format(element*(props.selectedValue*props.valorDolar)) };
                     rows_create.push(objeto) ;
                     counter += 1;
                 });
@@ -65,7 +65,7 @@ export default function ConversionesTable(props) {
                 }
             }else if (props.tipo === "divisa") {
                 conversionesList.forEach(element => {
-                    let objeto = {c_moneda: element, equivalencia: element*props.selectedValue };
+                    let objeto = {c_moneda: element, equivalencia: Intl.NumberFormat('es-CL').format(element*props.selectedValue) };
                     rows_create.push(objeto) ;
                     counter += 1;
                 });
