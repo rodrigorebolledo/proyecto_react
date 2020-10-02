@@ -1,7 +1,7 @@
 import { MenuItem, TextField, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 
-
+//Styles
 const useStyles = makeStyles({
     root: {
       '& .MuiFormLabel-root.Mui-focused':{
@@ -12,9 +12,12 @@ const useStyles = makeStyles({
 
 
 export default function SelectConversor(props){
+    //States
     const classes = useStyles();
     const [currency, setCurrency] = useState("DOLAR")
     
+
+    //Functions
     const handleCurrency = (event) => {
         setCurrency(event.target.value)
         props.handleSelected(event.target.value)

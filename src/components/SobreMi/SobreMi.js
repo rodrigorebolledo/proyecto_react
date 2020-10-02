@@ -2,7 +2,7 @@ import React from 'react';
 import CardAboutMe from './CardAboutMe';
 import { Grid, makeStyles } from '@material-ui/core';
 
-
+//Styles
 const useStyles = makeStyles({
     root: {
         maxWidth: '100%',

@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid'
 import { Button, makeStyles, Typography  } from '@material-ui/core';
 import { Link } from "react-router-dom";
 
-//Global
+//Styles
 const useStyles = makeStyles({
     grid_container: {
         marginTop: 10,
@@ -28,7 +28,6 @@ const useStyles = makeStyles({
 
 export default function NavBar() {
 
-    //Style
     const classes = useStyles();
   
     return (

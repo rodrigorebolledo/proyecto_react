@@ -1,6 +1,7 @@
 import { makeStyles, TextField } from '@material-ui/core';
 import React from 'react';
 
+//Styles
 const useStyles = makeStyles({
   root: {
     '& .MuiFormLabel-root.Mui-focused':{

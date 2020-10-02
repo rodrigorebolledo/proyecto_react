@@ -1,7 +1,7 @@
 import { CardActionArea, CardContent, CardMedia, makeStyles, Typography } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import React from 'react';
-
+//Styles
 const useStyles = makeStyles({
     root: {
         maxWidth: '30%',

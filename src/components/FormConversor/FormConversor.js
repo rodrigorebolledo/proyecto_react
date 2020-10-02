@@ -1,4 +1,5 @@
 import { Grid, makeStyles } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import InputConversor from './InputConversor';
@@ -9,6 +10,7 @@ import axios from 'axios';
 import SimpleChart from '../Chart';
 import MultipleChart from '../Chart/MultipleChart';
 import VariacionChart from '../Chart/VariacionChart';
+import ConversionesTable from '../Tabla';
 
   const useStyles = makeStyles({
 
@@ -22,8 +24,12 @@ import VariacionChart from '../Chart/VariacionChart';
         width: "50%"
     },
 
+    alert_container: {
+        marginTop: 15
+    },
+
     container_charts: {
-        // marginTop: 30
+        marginTop: 15
     }
 
 
@@ -61,6 +67,10 @@ export default function FormConversor(props){
     const [errors, setErrors] = useState({error: true})
     const [historico, setHistorico] = useState();
     const [multiHistorico, setMultiHistorico] = useState();
+    const [hideAlert, setHideAlert] = useState(true);
+    const [load, setLoad] = useState(true);
+    const [selectedValue, setSelectedValue] = useState();
+    const [valorDolar, setValorDolar] = useState()
     //Style
     const classes = useStyles();
     //Functions
@@ -68,6 +78,8 @@ export default function FormConversor(props){
          await axios.get("https://mindicador.cl/api")
         .then(res => {
             setCurrencies(res.data);
+            setLoad(false);
+            
         })
         .catch(err => alert(err))
     }
@@ -89,20 +101,26 @@ export default function FormConversor(props){
             let valor_divisa = divisa.valor;
             if(divisa.unidad_medida === 'Dólar'){
                 const valor_dolar = currencies["dolar"].valor
-                setConversion(((importe/valor_dolar)/valor_divisa).toFixed(2))
-                handleHideResult(false)
+                setConversion(((importe/valor_dolar)/valor_divisa).toFixed(7))
+                handleHideResult(false);
+                handleHideAlert(true);
 
             } else{
                 setConversion((importe/valor_divisa).toFixed(2));
-                handleHideResult(false)
+                handleHideResult(false);
+                handleHideAlert(true);
             }
         } else {
-            alert("Por favor ingrese un importe")
+            handleHideAlert(false);
         }
     }
     const handleHideResult = (value) => {
         setHideResult(value);
       }
+
+    const handleHideAlert = (value) => {
+        setHideAlert(value);
+    }
 
     const validate = () => {
         if(importe === undefined || importe === '' || importe === '0'){
@@ -156,6 +174,7 @@ export default function FormConversor(props){
                             count_alzas += 1;
 
                         } else if (element.valor < valor_maximo){
+                            valor_maximo = element.valor;
                             count_bajas -= 1;
                         }
 
@@ -203,29 +222,39 @@ export default function FormConversor(props){
 
         return serie;
     }
+
+    const handleValorDivisa = () => {
+        if(load === false){
+            const divisa = currencies[selected.toLowerCase()];
+            setValorDolar(currencies.dolar.valor);
+            setSelectedValue(divisa.valor);
+        }
+
+    }
    
 
     //Effects
     useEffect(() => {
         cargaApi();
         cargaSimpleHistorico('dolar');
-        cargaMultipleAlzaBaja()
+        cargaMultipleAlzaBaja();
     },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    useEffect(validate,[importe])
+    useEffect(() => {
+        handleValorDivisa();
+    },[load, selected]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    useEffect(validate,[importe]);
 
 
     return(
         <Grid
         container
-        direction="row"
         justify="center"
         className={classes.contenedor_form}
         >
             <Grid
                 container
-                direction="row"
                 justify="space-between"
                 className={classes.contenedor_inputs}
 
@@ -251,28 +280,46 @@ export default function FormConversor(props){
                     handleButton={handleButton}
                 />
             </Grid>
-            {hideResult === false && <Result importe={importe} conversion={conversion} selected={selected}/>}
-            <Grid
+            {hideAlert === false &&
+                <Grid 
                 container
-                direction="row"
                 justify="center"
-                className={classes.container_charts}
-            >
-                {(historico !== undefined && currencies !== undefined && multiHistorico !== undefined ) &&
-                
-                <Grid
-                    container
-                    direction="row"
-                    justify="center"
+                className={classes.alert_container}
                 >
-                    <SimpleChart selected={selected} historico={historico} titulo={`Valor del ${selected.toLowerCase()} en CLP`}/>
-                    <MultipleChart currencies={currencies} currencies_items={currencies_items} titulo={'Comparación valor divisas en CLP'}/>  
-                    <VariacionChart historico={multiHistorico} titulo="Alzas y disminuciones divisas - Último mes."/>
+                    <Alert severity="warning">Por favor ingrese un importe antes de presionar el botón convertir.</Alert>  
+                </Grid>
+            }
+
+            {hideResult === false && <Result importe={importe} conversion={conversion} selected={selected}/>}
+                {(historico !== undefined && currencies !== undefined && multiHistorico !== undefined && selectedValue !== undefined && valorDolar !== undefined ) &&
+                <Grid
+                    item
+                    
+                    
+                >   
+                    <Grid
+                        container
+                    >
+                        <ConversionesTable selectedValue={selectedValue} selected={selected} tipo="clp" valorDolar={valorDolar}/>
+                        <ConversionesTable selectedValue={selectedValue} selected={selected} tipo="divisa" valorDolar={valorDolar}/>
+                    </Grid>
+                        <Grid
+                            container
+                            justify="center"
+                        >
+                            <SimpleChart selected={selected} historico={historico} titulo={`Valor del ${selected.toLowerCase()} en CLP`}/>
+                            <MultipleChart currencies={currencies} currencies_items={currencies_items} titulo={'Comparación valor divisas en CLP'}/>  
+                        </Grid>
+                        <Grid
+                            container
+                            justify="center"
+                        >
+                            <VariacionChart historico={multiHistorico} titulo="Alzas y disminuciones divisas - Último mes."/>
+                        </Grid>
                 </Grid>
                 } 
 
                 
-            </Grid>    
-        </Grid>
+            </Grid>
     )
 }

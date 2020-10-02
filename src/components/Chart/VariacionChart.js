@@ -1,30 +1,17 @@
 import React from 'react';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine,
-  } from 'recharts';
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer} from 'recharts';
 import Card from '@material-ui/core/Card';
 import { makeStyles, Typography } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
+
+//Styles
 const useStyles = makeStyles({
     card: {
-        margin: 15
+        margin: 15,
+        width: '45%'
     }
 });
-// const data = [
-//     {
-//       name: 'DOLAR', Alza: 29, Disminucion: 1
-//     },
-//     {
-//       name: 'UF', Alza: 29, Disminucion: 1
-//     },
-//     {
-//       name: 'EURO', Alza: 0, Disminucion: 13
-//     },
-//     {
-//       name: 'UTM', Alza: 19, Disminucion: 3
-//     }
-//   ];
-
 
 export default function VariacionChart(props){
   
@@ -40,24 +27,26 @@ export default function VariacionChart(props){
                 </Typography>
             </CardContent>
             <CardContent>
-                <BarChart
-                    width={500}
-                    height={300}
-                    data={props.historico}
-                    margin={{
-                    top: 5, right: 30, left: 20, bottom: 5,
-                    }}
-                >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <ReferenceLine y={0} stroke="#000" />
-                <Bar dataKey="Alza" name="Cantidad de Alzas" fill="#454545" />
-                <Bar dataKey="Disminucion" name="Cantidad de Disminuciones" fill="#969696" />
+                <ResponsiveContainer width='100%' aspect={4.0/3.0}>
+                  <BarChart
+                      width={500}
+                      height={300}
+                      data={props.historico}
+                      margin={{
+                      top: 5, right: 30, left: 20, bottom: 5,
+                      }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <ReferenceLine y={0} stroke="#000" />
+                    <Bar dataKey="Alza" name="Cantidad de Alzas" fill="#454545" />
+                    <Bar dataKey="Disminucion" name="Cantidad de Disminuciones" fill="#969696" />
 
-            </BarChart>
+                  </BarChart>
+            </ResponsiveContainer>
             </CardContent>
         </Card>
     )

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Bar, Label } from 'recharts';
+import { BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Bar, Label, ResponsiveContainer } from 'recharts';
 import Card from '@material-ui/core/Card';
 import { makeStyles, Typography } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
+
+//Styles
 const useStyles = makeStyles({
   card: {
           margin: 15,
+          width: '45%'
         },
 
   barStyle: {
@@ -15,8 +18,9 @@ const useStyles = makeStyles({
 
 
 export default function SimpleChart(props){
-
+    //States
     const [data, setData] = useState([])
+    
     const classes = useStyles();
     const getArrayOfCurrencies = () => {
         const currencies_items = props.currencies_items;
@@ -48,23 +52,25 @@ export default function SimpleChart(props){
           </Typography>
         </CardContent>
         <CardContent>
-          <BarChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-              top: 5, right: 30, left: 20, bottom: 5,
-            }}
-          >
-            
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="codigo">
-            <Label value="Divisas" offset={0} position="insideBottom" />
-            </XAxis>
-            <YAxis />
-            <Tooltip formatter={(value) => new Intl.NumberFormat('es-CL').format(value)} />
-            <Bar dataKey="valor" name="Valor monedas" fill="#454545"/>
-          </BarChart>
+          <ResponsiveContainer width='100%' aspect={4.0/3.0}>
+            <BarChart
+              width={500}
+              height={300}
+              data={data}
+              margin={{
+                top: 5, right: 30, left: 20, bottom: 5,
+              }}
+            >
+              
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="codigo">
+              <Label value="Divisas" offset={0} position="insideBottom" />
+              </XAxis>
+              <YAxis />
+              <Tooltip formatter={(value) => new Intl.NumberFormat('es-CL').format(value)} />
+              <Bar dataKey="valor" name="Valor monedas" fill="#454545"/>
+            </BarChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
     )
