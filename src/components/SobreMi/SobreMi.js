@@ -6,7 +6,9 @@ import { Grid, makeStyles, Typography } from '@material-ui/core';
 const useStyles = makeStyles({
     root: {
         maxWidth: '100%',
-        marginTop: 30
+        paddingTop: 30,
+        backgroundColor: '#dedede',
+        height: '100%'
     },
 });
 

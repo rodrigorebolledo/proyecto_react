@@ -21,7 +21,7 @@ const useStyles = makeStyles({
     },
 
     app_bar: {
-        backgroundColor: '#000'
+        backgroundColor: '#222327'
     }
 
 });

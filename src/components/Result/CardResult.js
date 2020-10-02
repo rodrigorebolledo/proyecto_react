@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     },
 
     cabezera: {
-        backgroundColor: '#000000',
+        backgroundColor: '#222327',
     }
 });
 

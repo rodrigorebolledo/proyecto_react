@@ -1,8 +1,18 @@
-import { MenuItem, TextField } from '@material-ui/core';
+import { MenuItem, TextField, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 
-export default function SelectConversor(props){
 
+const useStyles = makeStyles({
+    root: {
+      '& .MuiFormLabel-root.Mui-focused':{
+        color: '#000'
+      },
+  }
+  });
+
+
+export default function SelectConversor(props){
+    const classes = useStyles();
     const [currency, setCurrency] = useState("DOLAR")
     
     const handleCurrency = (event) => {
@@ -17,6 +27,7 @@ export default function SelectConversor(props){
         label={props.label}
         value={currency}
         onChange={handleCurrency}
+        className={classes.root}
         helperText={props.helperText}
         required
       >

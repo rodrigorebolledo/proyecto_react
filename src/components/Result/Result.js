@@ -5,7 +5,7 @@ import CardResult from './CardResult';
 
 const useStyles = makeStyles({
     container: {
-        
+       marginBottom: 15, 
     }
 });
 

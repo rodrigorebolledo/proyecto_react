@@ -8,11 +8,13 @@ import Result from '../Result'
 import axios from 'axios';
 import SimpleChart from '../Chart';
 import MultipleChart from '../Chart/MultipleChart';
+import VariacionChart from '../Chart/VariacionChart';
 
   const useStyles = makeStyles({
 
     contenedor_form: {
-        marginTop: 30,
+        paddingTop: 30,
+        backgroundColor: '#dedede'
     },
 
 
@@ -21,7 +23,7 @@ import MultipleChart from '../Chart/MultipleChart';
     },
 
     container_charts: {
-        marginTop: 30
+        // marginTop: 30
     }
 
 
@@ -43,9 +45,9 @@ import MultipleChart from '../Chart/MultipleChart';
         value: 'UTM',
     },
 
-    {
-        value: 'BITCOIN',
-    },    
+    // {
+    //     value: 'BITCOIN',
+    // },    
   ];
 
 
@@ -58,6 +60,7 @@ export default function FormConversor(props){
     const [hideResult, setHideResult] = useState(true);
     const [errors, setErrors] = useState({error: true})
     const [historico, setHistorico] = useState();
+    const [multiHistorico, setMultiHistorico] = useState();
     //Style
     const classes = useStyles();
     //Functions
@@ -128,11 +131,85 @@ export default function FormConversor(props){
         
         
     }
+
+    const cargaMultipleAlzaBaja = async () => {
+        let formateado;
+        let array_variaciones_chart = [];
+        let contador = 0
+        currencies_items.forEach(async element => {
+            let objeto = {name: 'Dólar', Alza: 5, Disminucion: -2}
+            await axios.get(`https://mindicador.cl/api/${element.value.toLowerCase()}`)
+            .then((res) => {
+                if(res.data.unidad_medida === "Dólar"){
+                    formateado = format_data(res.data.serie, false);
+                    objeto['name'] = element.value
+
+                }else{
+                    formateado = format_data(res.data.serie, true);
+                    objeto['name'] = element.value;
+                    let valor_maximo = 0;
+                    let count_alzas = 0;
+                    let count_bajas = 0;
+
+                    formateado.forEach(element => {
+                        if(valor_maximo === 0){
+                            valor_maximo = element.valor;
+                        }
+                        if(element.valor > valor_maximo){
+                            
+                            valor_maximo = element.valor;
+                            count_alzas += 1;
+                            console.log('valor maximo: ' + valor_maximo)
+                            console.log('valor: ' + element.valor);
+
+                        }
+
+                    });
+                    valor_maximo = 0;
+                    formateado.forEach(element => {
+                        console.log(element.valor);
+                        if(valor_maximo === 0){
+                            valor_maximo = element.valor;
+                        }
+
+                        if(element.valor < valor_maximo){
+                            
+                            count_bajas -= 1;
+                            console.log('valor maximo: ' + valor_maximo)
+                            console.log('valor minimo: ' + element.valor);
+
+
+                        } else if (element.valor > valor_maximo) {
+                            valor_maximo = element.valor;
+                        }
+
+                    });
+                    objeto['Alza'] = (count_alzas)
+                    objeto['Disminucion'] = count_bajas
+                    array_variaciones_chart.push(objeto);
+                    contador += 1;
+                    if(contador === currencies_items.length){
+                        setMultiHistorico(array_variaciones_chart); // REVISAR AQUÍ
+                    }
+
+
+                }
+                
+            }).catch((err)=>{
+                console.log(`Se ha encontrado el siguiente error: ${err}`)
+            });             
+            
+            });
+        
+            
+            
+        
+    }
     
     const format_data = (serie, isClp) => {
         serie.sort((a, b) => {
-            if(moment(a.fecha).diff(b.fecha, 'days') > 0) return -1
-            if(moment(a.fecha).diff(b.fecha, 'days') < 0) return 1
+            if(moment(a.fecha).diff(b.fecha, 'days') > 0) return 1
+            if(moment(a.fecha).diff(b.fecha, 'days') < 0) return -1
             return 0
         });
         
@@ -153,10 +230,12 @@ export default function FormConversor(props){
         return serie;
     }
    
+
     //Effects
     useEffect(() => {
         cargaApi();
         cargaSimpleHistorico('dolar');
+        cargaMultipleAlzaBaja()
     },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(validate,[importe])
@@ -205,16 +284,20 @@ export default function FormConversor(props){
                 justify="center"
                 className={classes.container_charts}
             >
-                {(historico !== undefined && currencies !== undefined) &&
+                {(historico !== undefined && currencies !== undefined && multiHistorico !== undefined ) &&
+                
                 <Grid
                     container
                     direction="row"
                     justify="center"
                 >
-                    <SimpleChart selected={selected} historico={historico} titulo={`Valor del ${selected} en CLP`}/>
+                    <SimpleChart selected={selected} historico={historico} titulo={`Valor del ${selected.toLowerCase()} en CLP`}/>
                     <MultipleChart currencies={currencies} currencies_items={currencies_items} titulo={'Comparación valor divisas en CLP'}/>  
+                    <VariacionChart historico={multiHistorico} titulo="Alzas y disminuciones divisas - Último mes."/>
                 </Grid>
                 } 
+
+                
             </Grid>    
         </Grid>
     )

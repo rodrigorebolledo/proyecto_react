@@ -1,9 +1,19 @@
-import { TextField } from '@material-ui/core';
+import { makeStyles, TextField } from '@material-ui/core';
 import React from 'react';
+
+const useStyles = makeStyles({
+  root: {
+    '& .MuiFormLabel-root.Mui-focused':{
+      color: '#000'
+    },
+
+}
+});
+
 
 export default function InputConversor(props){
 
-
+  const classes = useStyles();
 
 
     return(
@@ -12,6 +22,7 @@ export default function InputConversor(props){
         label={props.label}
         type={props.type}
         autoComplete={props.autoComplete}
+        className={classes.root}
         onChange={(e) => props.handleInput(e.target.value)}
         required
       />
